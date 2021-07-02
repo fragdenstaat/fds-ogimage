@@ -6,7 +6,7 @@ const ORIGIN = 'https://fragdenstaat.de'
 
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
-    let reqUrl = new URL(req.url || '/');
+    let reqUrl = new URL(req.url || '/', `https://${req.headers.host}`);
     const path = reqUrl.searchParams.get('path');
     const hash = reqUrl.searchParams.get('hash');
     if (!hash) {
