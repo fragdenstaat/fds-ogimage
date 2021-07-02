@@ -4,6 +4,8 @@ import { ParsedRequest } from './types';
 
 const ORIGIN = 'https://fragdenstaat.de'
 
+const ALLOWED_PATHS = /^\/profil\/[\w+\.]+\/og\/$/
+
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     let reqUrl = new URL(req.url || '/', `https://${req.headers.host}`);
@@ -13,6 +15,9 @@ export function parseRequest(req: IncomingMessage) {
         throw new Error('Bad hash')
     }
     if (!path || path[0] !== '/') {
+        throw new Error('Bad path');
+    }
+    if (ALLOWED_PATHS.exec(path) === null) {
         throw new Error('Bad path');
     }
     let url = new URL(path, ORIGIN);
