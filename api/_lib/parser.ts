@@ -1,16 +1,15 @@
-import { IncomingMessage } from 'http';
 import { URL } from 'url'
-import { ParsedRequest } from './types';
+import { ParsedRequest, VercelIncomingMessage } from './types';
 
-const ORIGIN = 'https://fragdenstaat.de'
+const ORIGIN = process.env.ORIGIN_URL
 
 const ALLOWED_PATHS = /^\/profil\/[\w+\.]+\/og\/$/
 
-export function parseRequest(req: IncomingMessage) {
+export function parseRequest(req: VercelIncomingMessage) {
     console.log('HTTP ' + req.url);
     let reqUrl = new URL(req.url || '/', `https://${req.headers.host}`);
     const path = reqUrl.searchParams.get('path');
-    const hash = reqUrl.searchParams.get('hash');
+    const hash = req.query.hash
     if (!hash) {
         throw new Error('Bad hash')
     }
@@ -26,7 +25,7 @@ export function parseRequest(req: IncomingMessage) {
     }
 
     const parsedRequest: ParsedRequest = {
-        url, hash
+        url, hash, path
     };
     return parsedRequest;
 }
