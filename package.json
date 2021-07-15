@@ -12,6 +12,7 @@
     "puppeteer-core": "7.0.0"
   },
   "devDependencies": {
+    "@types/css-font-loading-module": "^0.0.6",
     "@types/node-fetch": "^2.5.10",
     "@types/puppeteer": "5.4.3",
     "@types/puppeteer-core": "5.4.0",
