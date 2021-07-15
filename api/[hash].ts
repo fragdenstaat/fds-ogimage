@@ -1,14 +1,11 @@
 import { ServerResponse } from 'http';
-import { createHash } from 'crypto'
 
 import { VercelIncomingMessage } from './_lib/types';
 import { parseRequest } from './_lib/parser';
-import { getScreenshot } from './_lib/chromium';
-import { getHtml } from './_lib/fetch';
+import { Renderer } from './_lib/chromium';
 
 
 const isDev = !process.env.AWS_REGION;
-const isHtmlDebug = process.env.OG_HTML_DEBUG === '1';
 
 export default async function handler(req: VercelIncomingMessage, res: ServerResponse) {
     let parsedReq
@@ -21,23 +18,17 @@ export default async function handler(req: VercelIncomingMessage, res: ServerRes
         return;
     }
     try {
-        const html = await getHtml(parsedReq);
-        if (isHtmlDebug) {
-            res.setHeader('Content-Type', 'text/html');
-            res.end(html);
-            return;
-        }
-        const hash = createHash('sha256');
-        hash.update(html);
-        const hexDigest = hash.digest('hex');
-        if (hexDigest !== parsedReq.hash) {
+        const renderer = new Renderer();
+        await renderer.init(isDev);
+        const changedHexDigest = await renderer.checkChangedHash(parsedReq);
+        if (changedHexDigest !== null) {
             res.writeHead(302, {
-                Location: `/api/${hexDigest}?path=${encodeURIComponent(parsedReq.path)}`
+                Location: `/api/${changedHexDigest}?path=${encodeURIComponent(parsedReq.path)}`
             });
             res.end();
             return;
         }
-        const file = await getScreenshot(html, isDev);
+        const file = await renderer.getScreenshot();
         res.statusCode = 200;
         res.setHeader('Content-Type', `image/png`);
         res.setHeader('Cache-Control', `public, immutable, no-transform, s-maxage=31536000, max-age=31536000`);
