@@ -28,7 +28,11 @@ export class Renderer {
         if (!this.page) {
             throw new Error('Init not called')
         }
-        const response = await this.page.waitForResponse(parsedReq.url.href);
+        console.log('Getting', parsedReq.url.href)
+        const response = await this.page.goto(parsedReq.url.href);
+        if (!response) {
+            throw new Error('Could not get URL')
+        }
         const buffer = await response.buffer()
         const hash = createHash('sha256');
         hash.update(buffer);
