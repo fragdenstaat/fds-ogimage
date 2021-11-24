@@ -3,7 +3,7 @@ import { ParsedRequest, VercelIncomingMessage } from './types';
 
 const ORIGIN = process.env.ORIGIN_URL
 
-const ALLOWED_PATHS = /^\/profil\/[\w+\.]+\/_og\/$/
+const ALLOWED_PATHS = /^\/(profil|en\/profile|anfrage|en\/request)\/[\w+\.-]+\/_og\/$/
 
 export function parseRequest(req: VercelIncomingMessage) {
     console.log('HTTP ' + req.url);
