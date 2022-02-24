@@ -1,6 +1,7 @@
 FROM zenika/alpine-chrome:89-with-node-14 AS deps
 WORKDIR /app
 COPY package.json yarn.lock ./
+USER root
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN yarn install --frozen-lockfile
 
@@ -9,8 +10,8 @@ FROM zenika/alpine-chrome:89-with-node-14 AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
-ENV NEXT_TELEMETRY_DISABLED 1
 USER root
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN yarn build
 
 # Production image, copy all the files and run next
