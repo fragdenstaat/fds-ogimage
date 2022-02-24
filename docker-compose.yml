@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  next:
+    build: .
+    # command: honcho -f Procfile.dev start
+    environment:
+      - ORIGIN_URL=https://fragdenstaat.de
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: "unless-stopped"
