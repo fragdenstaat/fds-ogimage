@@ -4,18 +4,21 @@
     "node": "14.x"
   },
   "scripts": {
-    "build": "tsc -p api/tsconfig.json"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "chrome-aws-lambda": "7.0.0",
-    "node-fetch": "^2.6.1",
-    "puppeteer-core": "7.0.0"
+    "next": "^12.1.0",
+    "puppeteer-core": "7.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "@types/css-font-loading-module": "^0.0.6",
-    "@types/node-fetch": "^2.5.10",
     "@types/puppeteer": "5.4.3",
     "@types/puppeteer-core": "5.4.0",
-    "typescript": "4.1.5"
+    "@types/react": "^17.0.39",
+    "typescript": "4.5.5"
   }
 }
