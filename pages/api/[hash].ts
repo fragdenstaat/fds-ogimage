@@ -1,17 +1,17 @@
-import { ServerResponse } from 'http';
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { VercelIncomingMessage } from './_lib/types';
 import { parseRequest } from './_lib/parser';
 import { Renderer } from './_lib/chromium';
 
 
-const isDev = !process.env.AWS_REGION;
+const isDev = process.env.NODE_ENV !== "production";
 
-export default async function handler(req: VercelIncomingMessage, res: ServerResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     let parsedReq
     try {
         parsedReq = parseRequest(req);
     } catch (e) {
+        console.warn(e)
         res.statusCode = 400;
         res.setHeader('Content-Type', 'text/html');
         res.end('<h1>Bad Request</h1>');
