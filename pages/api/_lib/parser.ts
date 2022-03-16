@@ -5,7 +5,7 @@ import { ParsedRequest } from './types';
 
 const ORIGIN = process.env.ORIGIN_URL
 
-const ALLOWED_PATHS = /^\/(profil|en\/profile|anfrage|en\/request)\/[\w+\.-]+\/_og\/$/
+const ALLOWED_PATHS = /^\/(profil|en\/profile|anfrage|en\/request|koalitionstracker\/[\w-]+\/vorhaben\/[\w-]+)\/[\w\.-]+\/_og\/$/
 
 export function parseRequest(req: NextApiRequest) {
     console.log('HTTP ' + req.url);
