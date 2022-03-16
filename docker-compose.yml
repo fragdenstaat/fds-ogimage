@@ -5,6 +5,8 @@ services:
     build: .
     environment:
       - ORIGIN_URL=https://fragdenstaat.de
+    env_file:
+      - .env
     ports:
       - "127.0.0.1:3000:3000"
     restart: "unless-stopped"
