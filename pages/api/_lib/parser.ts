@@ -5,7 +5,8 @@ import { ParsedRequest } from './types';
 
 const ORIGIN = process.env.ORIGIN_URL
 
-const ALLOWED_PATHS = /^\/(profil|en\/profile|anfrage|en\/request|koalitionstracker\/[\w-]+\/vorhaben\/[\w-]+)\/[\w\.-]+\/_og\/$/
+const ALLOWED_PATHS = process.env.ALLOWED_PATHS.split(",")
+const PATH_REGEX = new RegExp(`^/(${ALLOWED_PATHS.join("|")})/_og/$`)
 
 export function parseRequest(req: NextApiRequest) {
     console.log('HTTP ' + req.url);
@@ -21,7 +22,7 @@ export function parseRequest(req: NextApiRequest) {
     if (!path || path[0] !== '/') {
         throw new Error('Bad path');
     }
-    if (ALLOWED_PATHS.exec(path) === null) {
+    if (PATH_REGEX.exec(path) === null) {
         throw new Error('Bad path');
     }
     let url = new URL(path, ORIGIN);
