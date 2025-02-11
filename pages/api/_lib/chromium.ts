@@ -1,6 +1,6 @@
-import { createHash } from 'crypto'
+import { createHash } from 'crypto';
 
-import core, {Page} from 'puppeteer-core';
+import core, { Page } from 'puppeteer-core';
 import { getOptions } from './options';
 import { ParsedRequest } from './types';
 
@@ -20,12 +20,12 @@ async function getPage(isDev: boolean) {
 export class Renderer {
     private page: Page | undefined
 
-    async init (isDev: boolean) {
+    async init(isDev: boolean) {
         this.page = await getPage(isDev);
         await this.page.setViewport({ width: 1200, height: 630 });
-    
+
     }
-    async checkChangedHash (parsedReq: ParsedRequest): Promise<string | null> {
+    async checkChangedHash(parsedReq: ParsedRequest): Promise<string | null> {
         if (!this.page) {
             throw new Error('Init not called')
         }
@@ -33,6 +33,13 @@ export class Renderer {
         const response = await this.page.goto(parsedReq.url.href);
         if (!response) {
             throw new Error('Could not get URL')
+        }
+        if (this.page.url() !== parsedReq.url.href) {
+            // A redirect, likely to a login page, happened which means the URL is no longer available
+            return undefined
+        }
+        if (response.status() !== 200) {
+            return undefined
         }
         const buffer = await response.buffer()
         const hash = createHash('sha256');

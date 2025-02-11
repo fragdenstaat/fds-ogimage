@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { parseRequest } from './_lib/parser';
 import { Renderer } from './_lib/chromium';
+import { parseRequest } from './_lib/parser';
 
 
 const isDev = process.env.NODE_ENV !== "production";
@@ -21,7 +21,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const renderer = new Renderer();
         await renderer.init(isDev);
         const changedHexDigest = await renderer.checkChangedHash(parsedReq);
-        if (changedHexDigest !== null) {
+        if (changedHexDigest === undefined) {
+            res.statusCode = 404;
+            res.setHeader('Content-Type', 'text/html');
+            res.end('<h1>Not Found</h1>');
+            return;
+        } else if (changedHexDigest !== null) {
             res.writeHead(302, {
                 Location: `/api/${changedHexDigest}?path=${encodeURIComponent(parsedReq.path)}`
             });
