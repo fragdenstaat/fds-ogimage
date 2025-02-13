@@ -24,6 +24,16 @@ export class Renderer {
         this.page = await getPage(isDev);
         await this.page.setViewport({ width: 1200, height: 630 });
 
+        await this.page.setRequestInterception(true);
+
+        this.page.on('request', request => {
+            if (request.isNavigationRequest() && request.redirectChain().length !== 0) {
+                request.abort();
+            } else {
+                request.continue();
+            }
+        });
+
     }
     async checkChangedHash(parsedReq: ParsedRequest): Promise<string | null> {
         if (!this.page) {
