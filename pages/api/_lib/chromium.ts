@@ -27,10 +27,12 @@ export class Renderer {
         await this.page.setRequestInterception(true);
 
         this.page.on('request', request => {
-            if (request.isNavigationRequest() && request.redirectChain().length !== 0) {
-                request.abort();
-            } else {
-                request.continue();
+            if (!request.isInterceptResolutionHandled()) {
+                if (request.isNavigationRequest() && request.redirectChain().length !== 0) {
+                    request.abort();
+                } else {
+                    request.continue();
+                }
             }
         });
 
@@ -46,12 +48,12 @@ export class Renderer {
         }
         if (this.page.url() !== parsedReq.url.href) {
             // A redirect, likely to a login page, happened which means the URL is no longer available
-            return undefined
+            throw new Error('Redirect happend')
         }
         if (response.status() !== 200) {
-            return undefined
+            throw new Error('Non 200 error')
         }
-        const buffer = await response.buffer()
+        const buffer = await response.buffer();
         const hash = createHash('sha256');
         hash.update(buffer);
         const hexDigest = hash.digest('hex');

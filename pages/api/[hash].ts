@@ -17,22 +17,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.end('<h1>Bad Request</h1>');
         return;
     }
+    const renderer = new Renderer();
+    await renderer.init(isDev);
+    let changedHexDigest
     try {
-        const renderer = new Renderer();
-        await renderer.init(isDev);
-        const changedHexDigest = await renderer.checkChangedHash(parsedReq);
-        if (changedHexDigest === undefined) {
-            res.statusCode = 404;
-            res.setHeader('Content-Type', 'text/html');
-            res.end('<h1>Not Found</h1>');
-            return;
-        } else if (changedHexDigest !== null) {
-            res.writeHead(302, {
-                Location: `/api/${changedHexDigest}?path=${encodeURIComponent(parsedReq.path)}`
-            });
-            res.end();
-            return;
-        }
+        changedHexDigest = await renderer.checkChangedHash(parsedReq);
+    } catch (e) {
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'text/html');
+        res.end('<h1>Not Found</h1>');
+        return;
+    }
+    if (changedHexDigest !== null) {
+        res.writeHead(302, {
+            Location: `/api/${changedHexDigest}?path=${encodeURIComponent(parsedReq.path)}`
+        });
+        res.end();
+        return;
+    }
+    try {
         const file = await renderer.getScreenshot();
         res.statusCode = 200;
         res.setHeader('Content-Type', `image/png`);
