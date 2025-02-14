@@ -1,5 +1,5 @@
-import { URL } from 'url'
-import type { NextApiRequest } from 'next'
+import type { NextApiRequest } from 'next';
+import { URL } from 'url';
 
 import { ParsedRequest } from './types';
 
@@ -9,7 +9,6 @@ const ALLOWED_PATHS = process.env.ALLOWED_PATHS.split(",")
 const PATH_REGEX = new RegExp(`^/(${ALLOWED_PATHS.join("|")})/_og/$`)
 
 export function parseRequest(req: NextApiRequest) {
-    console.log('HTTP ' + req.url);
     let reqUrl = new URL(req.url || '/', `https://${req.headers.host}`);
     const path = reqUrl.searchParams.get('path');
     let hash = req.query.hash

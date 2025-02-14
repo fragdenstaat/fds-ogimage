@@ -1,17 +1,17 @@
 import { createHash } from 'crypto';
 
-import core, { Page } from 'puppeteer-core';
+import type { Page } from 'puppeteer-core';
+import core from 'puppeteer-core';
 import { getOptions } from './options';
 import { ParsedRequest } from './types';
 
-let _page: core.Page | null;
+let _page: Page | null;
 
 async function getPage(isDev: boolean) {
     if (_page) {
         return _page;
     }
     const options = await getOptions(isDev);
-    console.log(options)
     const browser = await core.launch(options);
     _page = await browser.newPage();
     return _page;
